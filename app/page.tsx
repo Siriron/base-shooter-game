@@ -1,24 +1,52 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import BubbleShooter from '@/components/game/BubbleShooter';
 import Leaderboard from '@/components/game/Leaderboard';
 import ScoreSubmit from '@/components/game/ScoreSubmit';
 import WalletConnect from '@/components/game/WalletConnect';
 import { useGameState } from '@/hooks/useGameState';
+import sdk from '@farcaster/frame-sdk';
 
 export default function Home() {
   const [showSubmit, setShowSubmit] = useState(false);
+  const [isFrameContext, setIsFrameContext] = useState(false);
   const { score, gameOver } = useGameState();
+
+  useEffect(() => {
+    // Initialize Farcaster Frame SDK
+    const initFrame = async () => {
+      try {
+        const context = await sdk.context;
+        setIsFrameContext(true);
+        sdk.actions.ready();
+        console.log('Farcaster Frame Context:', context);
+      } catch (error) {
+        console.log('Not in Farcaster frame context');
+        setIsFrameContext(false);
+      }
+    };
+
+    initFrame();
+  }, []);
 
   const handleScoreSubmitted = () => {
     setShowSubmit(false);
-    // Could trigger leaderboard refresh here
+    // Notify Farcaster of score submission
+    if (isFrameContext) {
+      sdk.actions.openUrl('https://basescan.org/address/0xb516e600522092387439d24376C1dc93A17e1e22');
+    }
   };
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900">
       <WalletConnect />
+      
+      {isFrameContext && (
+        <div className="fixed top-4 left-4 bg-purple-500/80 backdrop-blur px-4 py-2 rounded-lg text-white text-sm">
+          🟣 Running in Farcaster
+        </div>
+      )}
       
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
