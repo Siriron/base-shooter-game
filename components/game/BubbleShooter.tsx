@@ -165,7 +165,6 @@ export default function BubbleShooter() {
 
     // Draw grid bubbles with glow effect
     bubbles.forEach((bubble) => {
-      // Glow effect
       ctx.shadowColor = bubble.color;
       ctx.shadowBlur = 10;
       
@@ -177,7 +176,6 @@ export default function BubbleShooter() {
       ctx.lineWidth = 2;
       ctx.stroke();
       
-      // Reset shadow
       ctx.shadowBlur = 0;
     });
 
@@ -215,7 +213,7 @@ export default function BubbleShooter() {
       
       ctx.shadowBlur = 0;
 
-      // Draw aim line (longer and more visible)
+      // Draw aim line
       ctx.beginPath();
       ctx.moveTo(shooterX, shooterY);
       const aimLength = 150;
@@ -240,7 +238,7 @@ export default function BubbleShooter() {
     }
   }, [bubbles, currentBubble, shootingBubble, angle, canvasSize]);
 
-  // Handle aiming - works on both mobile and desktop
+  // Handle aiming
   const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
     if (gameOver || isPaused || shootingBubble) return;
     
@@ -266,7 +264,7 @@ export default function BubbleShooter() {
 
   // Desktop click to shoot
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (isMobile) return; // Don't shoot on mobile click
+    if (isMobile) return;
     handleShootAction();
   };
 
@@ -323,7 +321,6 @@ export default function BubbleShooter() {
             onClick={handleCanvasClick}
           />
           
-          {/* Mobile Instructions */}
           {isMobile && !shootingBubble && (
             <div className="mt-2 text-center text-white/80 text-sm">
               👆 Touch canvas to aim, then tap SHOOT button
@@ -331,12 +328,11 @@ export default function BubbleShooter() {
           )}
         </div>
 
-        {/* Mobile Shoot Button */}
         {isMobile && (
           <div className="mt-4 flex justify-center">
             <button
               onClick={handleShootAction}
-              disabled={gameOver || isPaused || !currentBubble || shootingBubble}
+              disabled={gameOver || isPaused || !currentBubble || shootingBubble !== null}
               className="px-12 py-4 bg-green-500 hover:bg-green-600 active:bg-green-700 disabled:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-bold text-xl touch-manipulation shadow-lg flex items-center gap-3 transform active:scale-95 transition-all"
             >
               <Target size={24} />
