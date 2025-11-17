@@ -14,7 +14,6 @@ export default function Home() {
   const { score, gameOver } = useGameState();
 
   useEffect(() => {
-    // Initialize Farcaster Frame SDK
     const initFrame = async () => {
       try {
         const context = await sdk.context;
@@ -32,7 +31,6 @@ export default function Home() {
 
   const handleScoreSubmitted = () => {
     setShowSubmit(false);
-    // Notify Farcaster of score submission
     if (isFrameContext) {
       sdk.actions.openUrl('https://basescan.org/address/0xb516e600522092387439d24376C1dc93A17e1e22');
     }
@@ -41,20 +39,17 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900">
       <WalletConnect />
-      
+
       {isFrameContext && (
-        <div className="fixed top-4 left-4 bg-purple-500/80 backdrop-blur px-4 py-2 rounded-lg text-white text-sm">
-          🟣 Running in Farcaster
+        <div className="fixed top-4 left-4 bg-purple-500/60 backdrop-blur px-3 py-1.5 rounded-lg text-white text-xs z-10">
+          🟣 Farcaster
         </div>
       )}
-      
+
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Game Area */}
           <div className="lg:col-span-2">
             <BubbleShooter />
-            
-            {/* Show submit button when game is over */}
             {gameOver && score > 0 && !showSubmit && (
               <div className="mt-4 text-center">
                 <button
@@ -67,7 +62,6 @@ export default function Home() {
             )}
           </div>
 
-          {/* Sidebar */}
           <div className="space-y-6">
             {showSubmit ? (
               <ScoreSubmit 
@@ -77,8 +71,7 @@ export default function Home() {
             ) : (
               <Leaderboard />
             )}
-            
-            {/* Game Info */}
+
             <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-2xl">
               <h3 className="text-xl font-bold text-white mb-4">How to Play</h3>
               <ul className="text-white/80 space-y-2 text-sm">
@@ -91,7 +84,6 @@ export default function Home() {
               </ul>
             </div>
 
-            {/* Contract Info */}
             <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-2xl">
               <h3 className="text-xl font-bold text-white mb-4">Contract Info</h3>
               <div className="text-white/80 space-y-2 text-sm break-all">

@@ -72,7 +72,7 @@ export default function BubbleShooter() {
     setNextBubble(createBubble(-1, COLS / 2));
   }, [setBubbles, setCurrentBubble, setNextBubble]);
 
-  // Animation loop for shooting bubble
+  // Animation loop
   useEffect(() => {
     if (!shootingBubble || isPaused) return;
 
@@ -85,19 +85,16 @@ export default function BubbleShooter() {
         let newVx = prev.vx;
         let newVy = prev.vy;
 
-        // Wall collision
         if (newX <= BUBBLE_RADIUS || newX >= canvasSize.width - BUBBLE_RADIUS) {
           newVx = -newVx;
           newX = newX <= BUBBLE_RADIUS ? BUBBLE_RADIUS : canvasSize.width - BUBBLE_RADIUS;
         }
 
-        // Check collision with existing bubbles or top
         if (newY <= BUBBLE_RADIUS) {
           completeBubbleShot(newX, 0, prev.color);
           return null;
         }
 
-        // Check collision with grid bubbles
         for (const bubble of bubbles) {
           const dx = newX - bubble.x;
           const dy = newY - bubble.y;
@@ -153,6 +150,57 @@ export default function BubbleShooter() {
     }
   };
 
+  // Draw bubble with 3D effect
+  const drawBubble = (ctx: CanvasRenderingContext2D, x: number, y: number, color: string, glow = false) => {
+    // Outer glow
+    if (glow) {
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 8;
+    }
+
+    // Main bubble
+    const gradient = ctx.createRadialGradient(
+      x - BUBBLE_RADIUS * 0.3,
+      y - BUBBLE_RADIUS * 0.3,
+      BUBBLE_RADIUS * 0.1,
+      x,
+      y,
+      BUBBLE_RADIUS
+    );
+    gradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+    gradient.addColorStop(0.4, color);
+    gradient.addColorStop(1, color);
+
+    ctx.beginPath();
+    ctx.arc(x, y, BUBBLE_RADIUS, 0, Math.PI * 2);
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    // Outer border
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Highlight shine
+    const highlight = ctx.createRadialGradient(
+      x - BUBBLE_RADIUS * 0.4,
+      y - BUBBLE_RADIUS * 0.4,
+      0,
+      x - BUBBLE_RADIUS * 0.4,
+      y - BUBBLE_RADIUS * 0.4,
+      BUBBLE_RADIUS * 0.5
+    );
+    highlight.addColorStop(0, 'rgba(255, 255, 255, 0.6)');
+    highlight.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+    ctx.beginPath();
+    ctx.arc(x - BUBBLE_RADIUS * 0.3, y - BUBBLE_RADIUS * 0.3, BUBBLE_RADIUS * 0.4, 0, Math.PI * 2);
+    ctx.fillStyle = highlight;
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
+  };
+
   // Draw game
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -163,82 +211,39 @@ export default function BubbleShooter() {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw grid bubbles with glow effect
+    // Draw grid bubbles
     bubbles.forEach((bubble) => {
-      ctx.shadowColor = bubble.color;
-      ctx.shadowBlur = 10;
-      
-      ctx.beginPath();
-      ctx.arc(bubble.x, bubble.y, BUBBLE_RADIUS, 0, Math.PI * 2);
-      ctx.fillStyle = bubble.color;
-      ctx.fill();
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      
-      ctx.shadowBlur = 0;
+      drawBubble(ctx, bubble.x, bubble.y, bubble.color);
     });
 
     // Draw shooting bubble
     if (shootingBubble) {
-      ctx.shadowColor = shootingBubble.color;
-      ctx.shadowBlur = 15;
-      
-      ctx.beginPath();
-      ctx.arc(shootingBubble.x, shootingBubble.y, BUBBLE_RADIUS, 0, Math.PI * 2);
-      ctx.fillStyle = shootingBubble.color;
-      ctx.fill();
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      
-      ctx.shadowBlur = 0;
+      drawBubble(ctx, shootingBubble.x, shootingBubble.y, shootingBubble.color, true);
     }
 
-    // Draw current bubble (shooter)
+    // Draw current bubble
     if (currentBubble && !shootingBubble) {
       const shooterX = canvas.width / 2;
       const shooterY = canvas.height - 50;
       
-      ctx.shadowColor = currentBubble.color;
-      ctx.shadowBlur = 15;
-      
-      ctx.beginPath();
-      ctx.arc(shooterX, shooterY, BUBBLE_RADIUS, 0, Math.PI * 2);
-      ctx.fillStyle = currentBubble.color;
-      ctx.fill();
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 3;
-      ctx.stroke();
-      
-      ctx.shadowBlur = 0;
+      drawBubble(ctx, shooterX, shooterY, currentBubble.color, true);
 
       // Draw aim line
       ctx.beginPath();
       ctx.moveTo(shooterX, shooterY);
-      const aimLength = 150;
+      const aimLength = 120;
       ctx.lineTo(
         shooterX + Math.cos(angle) * aimLength,
         shooterY + Math.sin(angle) * aimLength
       );
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-      ctx.lineWidth = 3;
-      ctx.setLineDash([10, 10]);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      
-      // Draw aim target circle
-      const targetX = shooterX + Math.cos(angle) * aimLength;
-      const targetY = shooterY + Math.sin(angle) * aimLength;
-      ctx.beginPath();
-      ctx.arc(targetX, targetY, 8, 0, Math.PI * 2);
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
       ctx.lineWidth = 2;
+      ctx.setLineDash([8, 8]);
       ctx.stroke();
+      ctx.setLineDash([]);
     }
   }, [bubbles, currentBubble, shootingBubble, angle, canvasSize]);
 
-  // Handle aiming
   const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
     if (gameOver || isPaused || shootingBubble) return;
     
@@ -262,13 +267,11 @@ export default function BubbleShooter() {
     }
   };
 
-  // Desktop click to shoot
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (isMobile) return;
     handleShootAction();
   };
 
-  // Shoot action
   const handleShootAction = () => {
     if (gameOver || isPaused || !currentBubble || shootingBubble) return;
 
@@ -315,15 +318,15 @@ export default function BubbleShooter() {
             ref={canvasRef}
             width={canvasSize.width}
             height={canvasSize.height}
-            className="bg-gradient-to-b from-black/30 to-black/50 rounded-lg touch-none border-2 border-white/20"
+            className="bg-gradient-to-b from-indigo-900/60 to-purple-900/60 rounded-lg touch-none border-2 border-white/10"
             style={{ cursor: isMobile ? 'default' : 'crosshair', maxWidth: '100%', height: 'auto' }}
             onPointerMove={handlePointerMove}
             onClick={handleCanvasClick}
           />
           
           {isMobile && !shootingBubble && (
-            <div className="mt-2 text-center text-white/80 text-sm">
-              👆 Touch canvas to aim, then tap SHOOT button
+            <div className="mt-2 text-center text-white/70 text-sm">
+              👆 Touch to aim, tap SHOOT to fire
             </div>
           )}
         </div>
@@ -333,7 +336,7 @@ export default function BubbleShooter() {
             <button
               onClick={handleShootAction}
               disabled={gameOver || isPaused || !currentBubble || shootingBubble !== null}
-              className="px-12 py-4 bg-green-500 hover:bg-green-600 active:bg-green-700 disabled:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-bold text-xl touch-manipulation shadow-lg flex items-center gap-3 transform active:scale-95 transition-all"
+              className="px-12 py-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 active:scale-95 disabled:from-gray-500 disabled:to-gray-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-bold text-xl touch-manipulation shadow-lg flex items-center gap-3 transition-all"
             >
               <Target size={24} />
               SHOOT
@@ -344,7 +347,7 @@ export default function BubbleShooter() {
         <div className="flex gap-2 sm:gap-4 mt-4 justify-center flex-wrap">
           <button
             onClick={togglePause}
-            className="px-4 sm:px-6 py-2 sm:py-3 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded-lg flex items-center gap-2 text-sm sm:text-base touch-manipulation"
+            className="px-4 sm:px-6 py-2 sm:py-3 bg-blue-500/80 hover:bg-blue-600/80 active:bg-blue-700/80 text-white rounded-lg flex items-center gap-2 text-sm sm:text-base touch-manipulation"
           >
             {isPaused ? <Play size={18} /> : <Pause size={18} />}
             {isPaused ? 'Resume' : 'Pause'}
@@ -352,7 +355,7 @@ export default function BubbleShooter() {
           
           <button
             onClick={handleReset}
-            className="px-4 sm:px-6 py-2 sm:py-3 bg-red-500 hover:bg-red-600 active:bg-red-700 text-white rounded-lg flex items-center gap-2 text-sm sm:text-base touch-manipulation"
+            className="px-4 sm:px-6 py-2 sm:py-3 bg-red-500/80 hover:bg-red-600/80 active:bg-red-700/80 text-white rounded-lg flex items-center gap-2 text-sm sm:text-base touch-manipulation"
           >
             <RotateCcw size={18} />
             Reset
@@ -361,14 +364,22 @@ export default function BubbleShooter() {
 
         {nextBubble && (
           <div className="mt-4 text-center">
-            <p className="text-white mb-2 text-sm sm:text-base">Next Bubble:</p>
-            <div 
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full mx-auto border-3 border-white shadow-lg"
-              style={{ 
-                backgroundColor: nextBubble.color,
-                boxShadow: `0 0 20px ${nextBubble.color}`
-              }}
-            />
+            <p className="text-white/80 mb-2 text-sm sm:text-base">Next:</p>
+            <div className="flex justify-center">
+              <canvas
+                width={50}
+                height={50}
+                ref={(canvas) => {
+                  if (canvas && nextBubble) {
+                    const ctx = canvas.getContext('2d');
+                    if (ctx) {
+                      ctx.clearRect(0, 0, 50, 50);
+                      drawBubble(ctx, 25, 25, nextBubble.color);
+                    }
+                  }
+                }}
+              />
+            </div>
           </div>
         )}
 
@@ -378,9 +389,9 @@ export default function BubbleShooter() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
-              className="absolute inset-0 flex items-center justify-center bg-black/70 backdrop-blur-md rounded-2xl z-50"
+              className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-md rounded-2xl z-50"
             >
-              <div className="bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl p-6 sm:p-8 text-center mx-4 shadow-2xl border-2 border-white/20">
+              <div className="bg-gradient-to-br from-indigo-600/90 to-purple-600/90 rounded-xl p-6 sm:p-8 text-center mx-4 shadow-2xl border-2 border-white/20">
                 <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">Game Over!</h2>
                 <p className="text-lg sm:text-xl text-white/90 mb-6">Final Score: <span className="text-yellow-300 font-bold">{score}</span></p>
                 <button

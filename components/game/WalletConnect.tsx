@@ -18,23 +18,23 @@ export default function WalletConnect() {
   };
 
   return (
-    <div className="w-full flex justify-center pb-4">
+    <div className="w-full flex justify-center pb-4 relative z-10">
       {isConnected && address ? (
-        <div className="flex items-center gap-2 bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-lg rounded-lg px-4 py-2 border border-white/20">
-          <Wallet size={16} className="text-blue-400" />
+        <div className="flex items-center gap-2 bg-gradient-to-r from-blue-500/30 to-purple-500/30 backdrop-blur-md rounded-lg px-4 py-2 border border-white/20 shadow-lg">
+          <Wallet size={16} className="text-blue-300" />
           <div className="text-white font-medium text-sm">{formatAddress(address)}</div>
           <button
             onClick={() => disconnect()}
             className="p-1.5 hover:bg-white/10 rounded transition-colors"
             title="Disconnect"
           >
-            <LogOut size={14} className="text-white" />
+            <LogOut size={14} className="text-white/80" />
           </button>
         </div>
       ) : (
         <button
           onClick={handleConnect}
-          className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-5 py-2.5 rounded-lg font-semibold shadow-lg transition-all text-sm transform hover:scale-105"
+          className="flex items-center gap-2 bg-gradient-to-r from-blue-500/80 to-purple-600/80 hover:from-blue-600 hover:to-purple-700 text-white px-5 py-2.5 rounded-lg font-semibold shadow-lg transition-all text-sm transform hover:scale-105"
         >
           <Wallet size={18} />
           Connect Wallet

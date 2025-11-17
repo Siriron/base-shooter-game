@@ -1,15 +1,15 @@
 import { Bubble } from '@/hooks/useGameState';
 
-// Brighter, more vibrant colors
+// More balanced, game-like colors
 export const COLORS = [
-  '#FF3B3B', // Bright Red
-  '#3BFFEE', // Bright Cyan
-  '#3B5BFF', // Bright Blue
-  '#FF8C3B', // Bright Orange
-  '#3BFF7A', // Bright Green
-  '#FFE93B', // Bright Yellow
-  '#FF3BF5', // Bright Pink
-  '#B03BFF'  // Bright Purple
+  '#FF6B9D', // Pink
+  '#4ECDC4', // Teal
+  '#45B7D1', // Sky Blue
+  '#FFA07A', // Light Orange
+  '#98D8C8', // Mint
+  '#FFD93D', // Golden Yellow
+  '#A8E6CF', // Soft Green
+  '#C77DFF'  // Soft Purple
 ];
 
 export const BUBBLE_RADIUS = 20;
