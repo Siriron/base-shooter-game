@@ -32,7 +32,7 @@ export default function Home() {
   const handleScoreSubmitted = () => {
     setShowSubmit(false);
     if (isFrameContext) {
-      sdk.actions.openUrl('https://basescan.org/address/0xb516e600522092387439d24376C1dc93A17e1e22');
+      sdk.actions.openUrl('https://basescan.org/address/0x448f38e528d0aafd1c7833eb108a9e9e02de706b');
     }
   };
 
@@ -90,12 +90,12 @@ export default function Home() {
                 <p><strong>Network:</strong> Base Mainnet</p>
                 <p><strong>Address:</strong></p>
                 <a 
-                  href="https://basescan.org/address/0xb516e600522092387439d24376C1dc93A17e1e22"
+                  href="https://basescan.org/address/0x448f38e528d0aafd1c7833eb108a9e9e02de706b"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-400 hover:text-blue-300 underline"
                 >
-                  0xb516e600522092387439d24376C1dc93A17e1e22
+                  0x448f38e528d0aafd1c7833eb108a9e9e02de706b
                 </a>
               </div>
             </div>
