@@ -3,16 +3,5 @@
     "header": "eyJmaWQiOjE0MDgzMjUsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHgwMTgyNTgyN2U2RjQxMTQ4ZjM1OGZhMTIwN0ExOERGRWRiRjkzNkY0In0",
     "payload": "eyJkb21haW4iOiJiYXNlLXNob290ZXItZ2FtZS1iZXRhLnZlcmNlbC5hcHAifQ",
     "signature": "3P32N4g5xozq71ZMwq1IkKk7uKSO2BPJW2bVF5voYaIJdDh3mX/Vr/a2497VG+8USB0oic5OJabu5LhJ/q16Qhs="
-  },
-  "miniapp": {   // Use "miniapp" for new apps; older ones may use "frame"
-    "version": "1",
-    "name": "Your App Name (e.g., Base Shooter Game Beta)",
-    "iconUrl": "https://base-shooter-game-beta.vercel.app/icon.png",
-    "homeUrl": "https://base-shooter-game-beta.vercel.app/",
-    "imageUrl": "https://base-shooter-game-beta.vercel.app/og-image.png",
-    "buttonTitle": "Play Now",
-    "splashImageUrl": "https://base-shooter-game-beta.vercel.app/splash.png",
-    "splashBackgroundColor": "#000000",
-    "webhookUrl": "https://base-shooter-game-beta.vercel.app/api/webhook"  // Optional, for notifications
   }
 }
